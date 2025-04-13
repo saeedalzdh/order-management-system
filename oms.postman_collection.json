@@ -1,0 +1,265 @@
+{
+	"info": {
+		"_postman_id": "de0fd602-a2a8-4fa9-a0e7-098d8e50be29",
+		"name": "oms",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27138528"
+	},
+	"item": [
+		{
+			"name": "/api/v1/orders",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"account_id\":\"60bfc6dc4887c9851d5a0246\",\n   \"brand_id\":\"60bfc6dc4887c9851d5a0245\",\n   \"channel_order_id\":\"TEST1626898082\",\n   \"customer_id\": 1,\n   \"address_id\": 1,\n   \"pickup_time\":\"2021-07-22T20:28:02Z\",\n   \"items\":[\n      {\n         \"name\":\"Hawaii Burger\",\n         \"plu\":\"CAT1-0001\",\n         \"quantity\":1\n      },\n      {\n         \"name\":\"Sushi Set Large\",\n         \"plu\":\"CAT2-0001\",\n         \"quantity\":1\n      }\n   ],\n   \"status\":1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/v1/orders",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/v1/orders/1/status",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"status\": 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/v1/orders/5/status",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"orders",
+						"5",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/v1/orders/1",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/v1/orders/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"orders",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/v1/analytics/status-metrics",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/api/v1/analytics/status-metrics?from_date=2025-04-11&to_date=2025-04-12&hour=1&status=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"analytics",
+						"status-metrics"
+					],
+					"query": [
+						{
+							"key": "from_date",
+							"value": "2025-04-11"
+						},
+						{
+							"key": "to_date",
+							"value": "2025-04-12"
+						},
+						{
+							"key": "hour",
+							"value": "1"
+						},
+						{
+							"key": "status",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/v1/analytics/order-metrics",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/api/v1/analytics/order-metrics?from_date=2025-04-11&to_date=2025-04-12&hour=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"analytics",
+						"order-metrics"
+					],
+					"query": [
+						{
+							"key": "from_date",
+							"value": "2025-04-11"
+						},
+						{
+							"key": "to_date",
+							"value": "2025-04-12"
+						},
+						{
+							"key": "hour",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/v1/analytics/customers/<customer_id>/lifetime-orders",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/api/v1/analytics/customers/1/lifetime-orders",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"analytics",
+						"customers",
+						"1",
+						"lifetime-orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/v1/analytics/customers/lifetime-orders",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/api/v1/analytics/customers/lifetime-orders",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"analytics",
+						"customers",
+						"lifetime-orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/v1/analytics/jobs/status",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/api/v1/analytics/jobs/status",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"analytics",
+						"jobs",
+						"status"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

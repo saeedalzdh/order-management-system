@@ -124,6 +124,7 @@ make seed-data # Seed the database with test data
 - API Documentation: http://localhost:8000/docs
 - Grafana Dashboards: http://localhost:3005/dashboards
 - Prometheus Metrics: http://localhost:9095/graph
+- By importing `oms.postman_collection.json` into Postman, you can test the API endpoints directly. 
 
 ### Development Commands
 
