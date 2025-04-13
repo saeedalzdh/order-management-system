@@ -1,0 +1,256 @@
+openapi: 3.0.0
+info:
+  title: Restaurant Order Analytics API
+  description: API for analytics on restaurant orders
+  version: 1.0.0
+
+servers:
+  - url: /api/v1
+    description: Version 1 API endpoint
+
+paths:
+  /analytics/status-metrics:
+    get:
+      summary: Get hourly status metrics
+      tags: [Analytics]
+      parameters:
+        - name: from_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Start date (inclusive)
+        - name: to_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: End date (inclusive)
+        - name: hour
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 23
+          description: Filter by specific hour (0-23)
+        - name: status
+          in: query
+          schema:
+            type: integer
+          description: Filter by status code
+      responses:
+        200:
+          description: Hourly status metrics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HourlyStatusMetric'
+
+  /analytics/order-metrics:
+    get:
+      summary: Get hourly order throughput
+      tags: [Analytics]
+      parameters:
+        - name: from_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Start date (inclusive)
+        - name: to_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: End date (inclusive)
+        - name: hour
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 23
+          description: Filter by specific hour (0-23)
+      responses:
+        200:
+          description: Hourly order metrics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HourlyOrderMetric'
+
+  /analytics/customers/{customer_id}/lifetime-orders:
+    get:
+      summary: Get customer lifetime order metrics
+      tags: [Analytics]
+      parameters:
+        - name: customer_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Customer ID
+      responses:
+        200:
+          description: Customer lifetime metrics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerLifetimeMetric'
+        404:
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /analytics/customers/lifetime-orders:
+    get:
+      summary: List all customers' lifetime order metrics
+      tags: [Analytics]
+      parameters:
+        - name: min_order_count
+          in: query
+          schema:
+            type: integer
+          description: Minimum number of orders
+        - name: from_date
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Filter by last order date (from)
+        - name: to_date
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Filter by last order date (to)
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+          description: Number of results per page
+      responses:
+        200:
+          description: List of customer lifetime metrics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CustomerLifetimeMetric'
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  pages:
+                    type: integer
+
+  /analytics/jobs/status:
+    get:
+      summary: Get analytics job status
+      tags: [Analytics]
+      parameters:
+        - name: job_name
+          in: query
+          schema:
+            type: string
+          description: Optional job name to filter by
+      responses:
+        200:
+          description: Status of analytics jobs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jobs:
+                    type: object
+                    additionalProperties:
+                      $ref: '#/components/schemas/JobStatus'
+
+components:
+  schemas:
+    HourlyStatusMetric:
+      type: object
+      properties:
+        date:
+          type: string
+        hour:
+          type: integer
+          minimum: 0
+          maximum: 23
+        status:
+          type: integer
+        count:
+          type: integer
+        total_duration:
+          type: integer
+        average_duration:
+          type: number
+          description: Calculated as total_duration / count
+
+    HourlyOrderMetric:
+      type: object
+      properties:
+        date:
+          type: string
+        hour:
+          type: integer
+          minimum: 0
+          maximum: 23
+        throughput:
+          type: integer
+
+    CustomerLifetimeMetric:
+      type: object
+      properties:
+        customer_id:
+          type: integer
+        order_count:
+          type: integer
+        first_order_at:
+          type: string
+        last_order_at:
+          type: string
+        avg_order_frequency_days:
+          type: number
+          nullable: true
+          description: Average days between orders
+
+    JobStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [pending, running, completed, failed]
+        timestamp:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+
+    Error:
+      type: object
+      properties:
+        detail:
+          type: string

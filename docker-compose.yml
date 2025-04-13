@@ -1,0 +1,81 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgres://user:pass@db:5432/restaurant
+      DB_HOST: db
+      DB_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: restaurant
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d restaurant"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  celery-worker:
+    build: .
+    command: celery -A app.core.celery worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - DATABASE_URL=postgres://user:pass@db:5432/restaurant
+      - DB_HOST=db
+      - DB_PORT=5432
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+
+  celery-beat:
+    build: .
+    command: celery -A app.core.celery beat --loglevel=info
+    volumes:
+      - .:/app
+      - celery_beat_data:/app/celerybeat
+    depends_on:
+      - db
+      - redis
+      - celery-worker
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - DATABASE_URL=postgres://user:pass@db:5432/restaurant
+      - DB_HOST=db
+      - DB_PORT=5432
+      - AGGREGATE_HOURLY_METRICS_INTERVAL=10 # 1 hour
+      - UPDATE_CUSTOMER_METRICS_INTERVAL=10 # 24 hours
+
+volumes:
+  postgres_data:
+  celery_beat_data:
